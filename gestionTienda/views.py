@@ -21,7 +21,7 @@ def tiendas(request):
             fechaCreacion=fechaCreacion,
             telefonoContacto=telefonoContacto
         )
-        return HttpResponseRedirect(reverse('gestionTiendaMod:tiendas'))
+        return HttpResponseRedirect(reverse('gestionTienda:tiendas'))
     return render(request,'tiendas.html',{
         'listaTiendas':tiendasSistema.objects.all().order_by('id')
     })
