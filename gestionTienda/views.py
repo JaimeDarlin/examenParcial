@@ -48,7 +48,7 @@ def consultaTienda(request,idTienda):
 def eliminarTienda(request, idTienda):
     objTienda = tiendasSistema.objects.get(id=idTienda)
     objTienda.delete()
-    return HttpResponseRedirect(reverse('gestionTiendaMod:tiendas'))
+    return HttpResponseRedirect(reverse('gestionTienda:tiendas'))
 
 def productos(request):
     if request.method == 'POST':
@@ -63,7 +63,7 @@ def productos(request):
             precio=precio,
             cantidad=cantidad,
         )
-        return HttpResponseRedirect(reverse('gestionTiendaMod:productos'))
+        return HttpResponseRedirect(reverse('gestionTienda:productos'))
     return render(request,'productos.html',{
         'productosTotales':productosSistema.objects.all().order_by('id'),
         'tiendasTotales':tiendasSistema.objects.all().order_by('id')
@@ -78,10 +78,10 @@ def asignarTienda(request):
         #objProducto = productosSistema.objects.get(productoAsociado=objProducto)
         objProducto.tiendaProducto = objTienda
         objProducto.save()
-        return HttpResponseRedirect(reverse('gestionTiendaMod:productos'))
+        return HttpResponseRedirect(reverse('gestionTienda:productos'))
     
 
 def eliminarProducto(request, idProducto):
     objProducto = productosSistema.objects.get(id=idProducto)
     objProducto.delete()
-    return HttpResponseRedirect(reverse('gestionTiendaMod:productos'))
+    return HttpResponseRedirect(reverse('gestionTienda:productos'))
