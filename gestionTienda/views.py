@@ -26,6 +26,30 @@ def tiendas(request):
         'listaTiendas':tiendasSistema.objects.all().order_by('id')
     })
 
+def consultaTienda(request,idTienda):
+    objTienda = tiendasSistema.objects.get(id=idTienda)
+    productosRelacionados = objTienda.productossistema_set.all()
+    listaProductos = []
+    for productoInfo in productosRelacionados:
+        listaProductos.append([
+            productoInfo.descripcion,
+            productoInfo.codigo,
+            productoInfo.precio,
+            productoInfo.cantidad
+        ])
+    print(productosRelacionados)
+    return JsonResponse({
+        'listaProductos':listaProductos,
+        'direccion':objTienda.direccion,
+        'fechaCreacion':objTienda.fechaCreacion,
+        'telefonoContacto':objTienda.telefonoContacto,
+    })
+
+def eliminarTienda(request, idTienda):
+    objTienda = tiendasSistema.objects.get(id=idTienda)
+    objTienda.delete()
+    return HttpResponseRedirect(reverse('gestionTiendaMod:tiendas'))
+
 def productos(request):
     if request.method == 'POST':
         descripcion = request.POST.get('descripcion')
@@ -44,3 +68,20 @@ def productos(request):
         'productosTotales':productosSistema.objects.all().order_by('id'),
         'tiendasTotales':tiendasSistema.objects.all().order_by('id')
     })
+
+def asignarTienda(request):
+    if request.method == 'POST':
+        idProducto = request.POST.get('productoSeleccionado')
+        idTienda = request.POST.get('tiendaSeleccionada')
+        objProducto = productosSistema.objects.get(id=idProducto)
+        objTienda = tiendasSistema.objects.get(id=idTienda)
+        #objProducto = productosSistema.objects.get(productoAsociado=objProducto)
+        objProducto.tiendaProducto = objTienda
+        objProducto.save()
+        return HttpResponseRedirect(reverse('gestionTiendaMod:productos'))
+    
+
+def eliminarProducto(request, idProducto):
+    objProducto = productosSistema.objects.get(id=idProducto)
+    objProducto.delete()
+    return HttpResponseRedirect(reverse('gestionTiendaMod:productos'))
