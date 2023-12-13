@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extraFiles %}
+    <script src="{% static 'tiendas.js' %}"></script>
+{% endblock %}
+
+{% block pageContent %}
+    <div class="container" style="height: 100vh; overflow: scroll;">
+        <h1 class="mt-3 mb-3">Tiendas</h1>
+        <br>
+        <div class="row mx-0">
+            <div class="col-2">
+                <div class="row mx-0">
+                    <a class="btn btn-success text-white" data-bs-toggle="modal" data-bs-target="#nuevaTienda">Nuevo <i class="fa-solid fa-store"></i></a>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div>
+            <table class="table table-bordered table-hover" id="usersTable" style="font-size: 12px;">
+                <thead class="table-dark text-center">
+                    <th scope="col">DIRECCION</th>
+                    <th scope="col">PROVINCIA</th>
+                    <th scope="col">REGION</th>
+                    <th scope="col">FECHA DE CREACION</th>
+                    <th scope="col">TELEFONO</th>
+                    <th scope="col">VER PRODUCTOS</th>
+                    <th scope="col">ELIMINAR</th>
+                </thead>
+                <tbody>
+                    {% for tiendaInfo in listaTiendas %}
+                    <tr>
+                        <td>{{ tiendaInfo.direccion }}</td>
+                        <td>{{ tiendaInfo.provincia }}</td>
+                        <td>{{ tiendaInfo.region }}</td>
+                        <td>{{ tiendaInfo.fechaCreacion }}</td>
+                        <td>{{ tiendaInfo.telefonoContacto }}</td>
+                        <td class="text-center"><a class="btn btn-info"  data-bs-toggle="modal" data-bs-target="#verProductos" id="{{ tiendaInfo.id }}" onclick="consultarProductoxTienda(this.id)"><i class="fa-solid fa-eye"></i></a></td>
+                        <td class="text-center"><a class="btn btn-danger" href="{% url 'gestionTienda:eliminarTienda' tiendaInfo.id %}"><i class="fa-solid fa-trash-can"></i></a></td>
+                    </tr>
+                   {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block modalContent %}
+    <!-- Nuevo almacen modal window -->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="nuevaTienda">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <form action="{% url 'gestionTienda:tiendas' %}" method="post">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title">Nueva Tienda</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label>Dirección:</label>
+                                <input type="text" class="form-control" name="direccion" id="direccion" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3 mt-3">
+                            <div class="col-6">
+                                <label>Provincia:</label>
+                                <input type="text" class="form-control" name="provincia" id="provincia" required>
+                            </div>
+                            <div class="col-6">
+                                <label>Región:</label>
+                                <input type="text" class="form-control" name="region" id="region" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3 mt-3">
+                            <div class="col-6">
+                                <label>Fecha de Creación:</label>
+                                <input type="date" class="form-control" name="fechaCreacion" id="fechaCreacion" required>
+                            </div>
+                            <div class="col-6">
+                                <label>Teléfono de Contacto:</label>
+                                <input type="text" class="form-control" name="telefonoContacto" id="telefonoContacto" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Crear</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ver usuarios modal window -->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="verProductos">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Productos de la Tienda <b id="nombreTiendaProductos">TIENDA</b></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3 mt-3">
+                        <div class="col-12">
+                            <table class="table table-bordered table-hover">
+                                <thead class="table-dark">
+                                    <th>Descripcion</th>
+                                    <th>Código</th>
+                                    <th>Precio</th>
+                                    <th>Cantidad</th>
+                                </thead>
+                                <tbody id="productosxtienda"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

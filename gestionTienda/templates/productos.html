@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extraFiles %}
+    <!-- <script src="{% static 'usuarios.js' %}"></script> -->
+{% endblock %}
+
+{% block pageContent %}
+    <div class="container" style="height: 100vh; overflow: scroll;">
+        <h1 class="mt-3 mb-3">Productos</h1>
+        <br>
+        <div class="row mx-0">
+            <div class="col-2">
+                <div class="row mx-0">
+                    <a class="btn btn-success text-white" data-bs-toggle="modal" data-bs-target="#nuevoProducto">Nuevo <i class="fa-solid fa-bag-shopping"></i></a>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="row mx-0">
+                    <a class="btn btn-success text-white" data-bs-toggle="modal" data-bs-target="#asignarTienda">Asignar</a>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div>
+            <table class="table table-bordered table-hover" id="usersTable" style="font-size: 12px;">
+                <thead class="table-dark">
+                    <th scope="col">DESCRIPCION</th>
+                    <th scope="col">CODIGO</th>
+                    <th scope="col">PRECIO DE VENTA</th>
+                    <th scope="col">CANTIDAD</th>
+                    <th scope="col">TIENDA RELACIONADA</th>
+                    <th scope="col">ELIMINAR</th>
+                </thead>
+                <tbody>
+                    {% for productoUnitario in productosTotales %}
+                    <tr>
+                        <td>{{ productoUnitario.descripcion }}</td>
+                        <td>{{ productoUnitario.codigo }}</td>
+                        <td>{{ productoUnitario.precio }}</td>
+                        <td>{{ productoUnitario.cantidad }}</td>
+                        <td>{{ productoUnitario.tiendaProducto.direccion }}</td>
+                        <td class="text-center"><a class="btn btn-danger" href="{% url 'gestionTiendaMod:eliminarProducto' productoUnitario.id %}"><i class="fa-solid fa-trash-can"></i></a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block modalContent %}
+    <!-- New user modal window -->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="nuevoProducto">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <form action="{% url 'gestionTienda:productos' %}" method="post">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title">Nuevo Producto</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3 mt-3">
+                            <div class="col-6">
+                                <label>Descripción:</label>
+                                <input type="text" class="form-control" name="descripcion" id="descripcion" required>
+                            </div>
+                            <div class="col-6">
+                                <label>Código:</label>
+                                <input type="text" class="form-control" name="codigo" id="codigo" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label>Precio de Tienda:</label>
+                                <input type="text" class="form-control" name="precio" id="precio" required>
+                            </div>
+                            <div class="col-6">
+                                <label>Cantidad</label>
+                                <input type="text" class="form-control" name="cantidad" id="cantidad" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Agregar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- New user modal window -->
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" id="asignarTienda">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <form action="{% url 'gestionTienda:asignarTienda' %}" method="post">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title">Asignar Tienda</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3 mt-3">
+                            <div class="col-6">
+                                <label>Producto</label>
+                                <select class="form-select" name="productoSeleccionado" required>
+                                    <option value=""></option>
+                                    {% for productoInfo in productosTotales %}
+                                    <option value="{{ productoInfo.id }}">{{ productoInfo.descripcion }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label>Tienda</label>
+                                <select class="form-select" name="tiendaSeleccionada" required>
+                                    <option value=""></option>
+                                    {% for tiendaInfo in tiendasTotales %}
+                                    <option value="{{ tiendaInfo.id }}">{{ tiendaInfo.direccion }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Asignar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
